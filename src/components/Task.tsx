@@ -20,13 +20,7 @@ export const Task: React.FC<{ todo: Todo }> = React.memo(({ todo }) => {
     }))
     .off(unmount);
 
-  useEffect(() => {
-    return () => {
-      console.log("UNMOUNT");
-      unmount();
-    };
-  }, [unmount]);
-
+  useEffect(() => () => unmount(), [unmount]);
   useEffect(() => console.log("RENDER_Task"));
 
   const TaskItem = createComponent($store, (props, store) => {
