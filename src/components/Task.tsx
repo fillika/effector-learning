@@ -1,8 +1,6 @@
-import { ExecOptionsWithStringEncoding } from "child_process";
 import React, { useEffect } from "react";
 import {
   deleteTaskEvent,
-  Todo,
   toggleDoneEvent,
   changeEvent,
 } from "../models/todos";
