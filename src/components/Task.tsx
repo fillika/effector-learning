@@ -1,52 +1,31 @@
+import { ExecOptionsWithStringEncoding } from "child_process";
 import React, { useEffect } from "react";
-import { createEvent, createStore } from "effector";
-import { deleteTaskEvent, Todo, toggleDoneEvent } from "../models/todos";
-import { createComponent } from "effector-react";
+import {
+  deleteTaskEvent,
+  Todo,
+  toggleDoneEvent,
+  changeEvent,
+} from "../models/todos";
 
-export const Task: React.FC<{ todo: Todo }> = React.memo(({ todo }) => {
-  const $store = createStore(todo);
-  const changeEvent = createEvent<string>();
-  const unmount = createEvent();
-
-  $store
-    .on(changeEvent, (state, text) => ({
-      ...state,
-      text,
-    }))
-    .off(unmount);
-
-  useEffect(() => () => unmount(), [unmount]);
-  useEffect(() => console.log("RENDER_Task"));
-
-  const TaskItem = createComponent($store, (props, store) => {
-    const styles = {
-      marginBottom: "0.5em",
-    };
-
-    const deleteHandler = () => deleteTaskEvent(store.id);
-    const doneHandler = () => toggleDoneEvent(store.id);
-    const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) =>
-      changeEvent(e.target.value);
+export const Task: React.FC<{ id: string; text: string; done: boolean }> =
+  React.memo(({ id, text, done }) => {
+    useEffect(() => console.log("RENDER_Task"));
 
     return (
-      <li style={styles}>
-        <input
-          value={store.text}
-          onChange={changeHandler}
-          type="text"
-          id={store.id}
-          disabled={store.done}
-        />
+      <li>
+        <div>
+          <input
+            value={text}
+            onChange={(e) => changeEvent({ id: id, text: e.target.value })}
+            disabled={done}
+            type="text"
+          />
+        </div>
 
         <div>
-          <button onClick={doneHandler}>Done</button>
-          <button onClick={deleteHandler} disabled={store.done}>
-            Delete task
-          </button>
+          <button onClick={() => toggleDoneEvent(id)}>Done</button>
+          <button onClick={() => deleteTaskEvent(id)}>Delete</button>
         </div>
       </li>
     );
   });
-
-  return <TaskItem />;
-});

@@ -9,10 +9,22 @@ export interface Todo {
 
 export type TodosStore = Todo[];
 
-export const $todos = createStore<TodosStore>([]);
+export const $todos = createStore<TodosStore>([
+  {
+    id: '45fdsx',
+    text: 'Первый и законченный',
+    done: true
+  },
+  {
+    id: '58ytgs76',
+    text: 'Второй и еще НЕ законченный',
+    done: false
+  },
+]);
 export const addTaskEvent = createEvent<Todo>();
 export const deleteTaskEvent = createEvent<string>();
 export const toggleDoneEvent = createEvent<string>();
+export const changeEvent = createEvent<{ id: string; text: string }>();
 
 sample({
   clock: formSubmitEvent,
@@ -27,14 +39,24 @@ sample({
 
 $todos
   .on(addTaskEvent, (state, todo) => [...state, todo])
-  .on(toggleDoneEvent, (state, id) => state.map(todo => {
-    if (todo.id === id) {
-      todo.done = !todo.done;
-      return todo;
-    }
-    
-    return todo;
-  }))
-  .on(deleteTaskEvent, (state, id) => state.filter((task) => task.id !== id));
+  .on(toggleDoneEvent, (state, id) =>
+    state.map((todo) => {
+      if (todo.id === id) {
+        todo.done = !todo.done;
+        return todo;
+      }
 
-$todos.watch((state) => console.log(state));
+      return todo;
+    })
+  )
+  .on(changeEvent, (state, { id, text }) =>
+    state.map((todo) => {
+      if (todo.id === id) {
+        todo.text = text;
+        return todo;
+      }
+
+      return todo;
+    })
+  )
+  .on(deleteTaskEvent, (state, id) => state.filter((task) => task.id !== id));
