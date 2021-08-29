@@ -1,7 +1,7 @@
 import React from "react";
 import { useStore } from "effector-react";
 import { $todos } from "../models/todos";
-import { Task } from "./Task";
+import { Task } from "./EffectorTask";
 
 export const TaskList = () => {
   const todos = useStore($todos);
@@ -12,7 +12,7 @@ export const TaskList = () => {
       <div>
         <ul>
           {todos.map((todo) => (
-            <Task key={todo.id} todo={todo} />
+            <Task todo={todo} key={todo.id} />
           ))}
         </ul>
       </div>

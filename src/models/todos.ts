@@ -1,4 +1,4 @@
-import { createStore, createEvent, forward, sample } from "effector";
+import { createStore, createEvent, sample } from "effector";
 import { $activeTask, clearValue, formSubmitEvent } from "./activeTask";
 
 export interface Todo {
@@ -11,7 +11,6 @@ export type TodosStore = Todo[];
 
 export const $todos = createStore<TodosStore>([]);
 export const addTaskEvent = createEvent<Todo>();
-export const toggleTaskEvent = createEvent<string>();
 
 sample({
   clock: formSubmitEvent,
@@ -26,14 +25,3 @@ sample({
 
 $todos
   .on(addTaskEvent, (state, todo) => [...state, todo])
-  .on(toggleTaskEvent, (state, id) => {
-    return state
-      .map((task) => task)
-      .map((task) => {
-        if (task.id === id) {
-          task.done = !task.done;
-        }
-
-        return task;
-      });
-  });
