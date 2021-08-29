@@ -1,19 +1,14 @@
 import React, { useEffect } from "react";
 import { createEvent, createStore } from "effector";
-import { deleteTaskEvent, Todo } from "../models/todos";
+import { deleteTaskEvent, Todo, toggleDoneEvent } from "../models/todos";
 import { createComponent } from "effector-react";
 
 export const Task: React.FC<{ todo: Todo }> = React.memo(({ todo }) => {
   const $store = createStore(todo);
-  const isDoneEvent = createEvent();
   const changeEvent = createEvent<string>();
   const unmount = createEvent();
 
   $store
-    .on(isDoneEvent, (state) => ({
-      ...state,
-      done: !state.done,
-    }))
     .on(changeEvent, (state, text) => ({
       ...state,
       text,
@@ -27,18 +22,22 @@ export const Task: React.FC<{ todo: Todo }> = React.memo(({ todo }) => {
     const styles = {
       marginBottom: "0.5em",
     };
+
     const deleteHandler = () => deleteTaskEvent(store.id);
-    const doneHandler = () => isDoneEvent();
+    const doneHandler = () => toggleDoneEvent(store.id);
+    const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) =>
+      changeEvent(e.target.value);
 
     return (
       <li style={styles}>
         <input
           value={store.text}
-          onChange={(e) => changeEvent(e.target.value)}
+          onChange={changeHandler}
           type="text"
           id={store.id}
           disabled={store.done}
         />
+
         <div>
           <button onClick={doneHandler}>Done</button>
           <button onClick={deleteHandler} disabled={store.done}>

@@ -12,6 +12,7 @@ export type TodosStore = Todo[];
 export const $todos = createStore<TodosStore>([]);
 export const addTaskEvent = createEvent<Todo>();
 export const deleteTaskEvent = createEvent<string>();
+export const toggleDoneEvent = createEvent<string>();
 
 sample({
   clock: formSubmitEvent,
@@ -26,4 +27,14 @@ sample({
 
 $todos
   .on(addTaskEvent, (state, todo) => [...state, todo])
+  .on(toggleDoneEvent, (state, id) => state.map(todo => {
+    if (todo.id === id) {
+      todo.done = !todo.done;
+      return todo;
+    }
+    
+    return todo;
+  }))
   .on(deleteTaskEvent, (state, id) => state.filter((task) => task.id !== id));
+
+$todos.watch((state) => console.log(state));
